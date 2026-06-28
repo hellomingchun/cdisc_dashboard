@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDISC Studio | SDTM Previewer</title>
+    <meta name="description" content="A premium interface to upload clinical study specifications and preview SDTM datasets interactively.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-icon"><i class="fa-solid fa-dna"></i></div>
+                <h1 class="logo-text">CDISC<span>Studio</span> <span style="font-size: 0.5em; opacity: 0.7;">v1.1.0</span></h1>
+            </div>
+            
+            <nav class="main-nav">
+                <a href="#" class="nav-item active"><i class="fa-solid fa-table-list"></i> SDTM Previewer</a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-code-branch"></i> ADaM Engine</a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-book-medical"></i> Define.xml</a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar">M</div>
+                    <div class="user-info">
+                        <span class="user-name">Ming</span>
+                        <span class="user-role">Clinical Programmer</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="page-title">
+                    <h2>SDTM Dataset Preview</h2>
+                    <p>Upload your mapping specifications to dynamically build and visualize datasets.</p>
+                </div>
+                <div class="top-actions">
+                    <button class="btn btn-icon" id="theme-toggle" title="Toggle Theme"><i class="fa-solid fa-sun"></i></button>
+                    <button class="btn btn-secondary"><i class="fa-solid fa-clock-rotate-left"></i> History</button>
+                    <button class="btn btn-primary" id="btn-build" disabled><i class="fa-solid fa-play"></i> Build SDTM</button>
+                </div>
+            </header>
+
+            <div class="workspace">
+                <!-- Upload Section -->
+                <section class="upload-section">
+                    <div class="glass-card dropzone-container" id="dropzone">
+                        <input type="file" id="file-input" multiple accept=".yaml,.yml,.json,.xlsx" hidden>
+                        <div class="drop-content">
+                            <div class="upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                            <h3>Upload Specifications</h3>
+                            <p>Drag & drop your YAML or Excel specs here, or <span class="browse-link" id="browse-btn">browse files</span></p>
+                            <span class="file-hints">Supports .yaml, .json, .xlsx up to 50MB</span>
+                        </div>
+                    </div>
+
+                    <div class="files-list-container glass-card hidden" id="files-list-card">
+                        <div class="card-header">
+                            <h3>Uploaded Files</h3>
+                            <span class="badge" id="file-count">0</span>
+                        </div>
+                        <ul class="files-list" id="files-list">
+                            <!-- Files will be injected here -->
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Data Preview Section -->
+                <section class="preview-section hidden" id="preview-section">
+                    <div class="glass-card preview-card">
+                        <div class="card-header">
+                            <div class="domain-tabs">
+                                <button class="tab active" data-domain="DM">DM</button>
+                                <button class="tab" data-domain="AE">AE</button>
+                                <button class="tab" data-domain="VS">VS</button>
+                                <button class="tab" data-domain="LB">LB</button>
+                            </div>
+                            <div class="table-actions">
+                                <div class="search-box">
+                                    <i class="fa-solid fa-search"></i>
+                                    <input type="text" placeholder="Filter records...">
+                                </div>
+                                <button class="btn btn-icon"><i class="fa-solid fa-download"></i></button>
+                                <button class="btn btn-icon"><i class="fa-solid fa-expand"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table class="data-table" id="sdtm-table">
+                                <thead>
+                                    <!-- Table headers injected via JS -->
+                                </thead>
+                                <tbody>
+                                    <!-- Table rows injected via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="card-footer">
+                            <span class="record-count">Showing 1-15 of 142 records</span>
+                            <div class="pagination">
+                                <button class="btn-page disabled"><i class="fa-solid fa-chevron-left"></i></button>
+                                <span class="page-current">1</span>
+                                <button class="btn-page"><i class="fa-solid fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Empty State -->
+                <section class="empty-state" id="empty-state">
+                    <div class="illustration">
+                        <i class="fa-solid fa-table-cells-large"></i>
+                    </div>
+                    <h3>No Data Generated Yet</h3>
+                    <p>Upload your mapping specifications and click "Build SDTM" to preview datasets.</p>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Notification Toast -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
