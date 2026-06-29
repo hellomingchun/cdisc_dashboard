@@ -53,25 +53,66 @@
             <div class="workspace">
                 <!-- Upload Section -->
                 <section class="upload-section">
-                    <div class="glass-card dropzone-container" id="dropzone">
-                        <input type="file" id="file-input" multiple accept=".yaml,.yml,.json,.xlsx" hidden>
-                        <div class="drop-content">
-                            <div class="upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-                            <h3>Upload Specifications</h3>
-                            <p>Drag & drop your YAML or Excel specs here, or <span class="browse-link" id="browse-btn">browse files</span></p>
-                            <span class="file-hints">Supports .yaml, .json, .xlsx up to 50MB</span>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <div class="glass-card dropzone-container" id="dropzone-specs">
+                                <input type="file" id="file-input-specs" multiple accept=".yaml,.yml,.json,.xlsx" hidden>
+                                <div class="drop-content">
+                                    <div class="upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                                    <h3>Upload Specifications</h3>
+                                    <p>Drag & drop your YAML or Excel specs here, or <span class="browse-link" id="browse-btn-specs">browse files</span></p>
+                                    <span class="file-hints">Supports .yaml, .json, .xlsx</span>
+                                </div>
+                            </div>
+                            <div class="files-list-container glass-card hidden" id="files-list-card-specs">
+                                <div class="card-header">
+                                    <h3>Uploaded Specs</h3>
+                                    <span class="badge" id="file-count-specs">0</span>
+                                </div>
+                                <ul class="files-list" id="files-list-specs"></ul>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="files-list-container glass-card hidden" id="files-list-card">
-                        <div class="card-header">
-                            <h3>Uploaded Files</h3>
-                            <span class="badge" id="file-count">0</span>
+                        <div>
+                            <div class="glass-card dropzone-container" id="dropzone-data">
+                                <input type="file" id="file-input-data" accept=".xml,.csv" hidden>
+                                <div class="drop-content">
+                                    <div class="upload-icon"><i class="fa-solid fa-database"></i></div>
+                                    <h3>Upload Source Data</h3>
+                                    <p>Drag & drop your XML or CSV data here, or <span class="browse-link" id="browse-btn-data">browse files</span></p>
+                                    <span class="file-hints">Supports .xml, .csv</span>
+                                </div>
+                            </div>
+                            <div class="files-list-container glass-card hidden" id="files-list-card-data">
+                                <div class="card-header">
+                                    <h3>Uploaded Data</h3>
+                                    <span class="badge" id="file-count-data">0</span>
+                                </div>
+                                <ul class="files-list" id="files-list-data"></ul>
+                            </div>
                         </div>
-                        <ul class="files-list" id="files-list">
-                            <!-- Files will be injected here -->
-                        </ul>
                     </div>
+                </section>
+
+                <!-- Form Mapping Section -->
+                <section class="mapping-section" style="margin-bottom: 2rem;">
+                    <details class="glass-card mapping-card" style="padding: 1.5rem; cursor: pointer; border-radius: 12px;">
+                        <summary style="font-weight: 600; display: flex; justify-content: space-between; align-items: center; list-style: none;">
+                            <span style="font-size: 1.05rem;"><i class="fa-solid fa-link" style="margin-right: 10px; color: var(--primary);"></i> Domain to FormOID Mapping (Optional)</span>
+                            <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); transition: transform 0.3s;" id="mapping-chevron"></i>
+                        </summary>
+                        <div class="mapping-content" style="margin-top: 1.5rem; cursor: default; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                            <p style="color: var(--text-muted); margin-bottom: 1.2rem; font-size: 0.9rem;">
+                                Define custom mappings to link SDTM Domains to specific ODM FormOIDs for this study (e.g., <code>DM</code> &rarr; <code>F_1DEMOGRAPHIC</code>). These overrides take precedence during the build.
+                            </p>
+                            <div id="mapping-rows" style="display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1rem;">
+                                <!-- Mapping rows injected by JS -->
+                            </div>
+                            <button class="btn btn-secondary" id="btn-add-mapping" style="width: fit-content; font-size: 0.85rem; padding: 0.5rem 1rem;">
+                                <i class="fa-solid fa-plus"></i> Add Mapping Rule
+                            </button>
+                        </div>
+                    </details>
                 </section>
 
                 <!-- Data Preview Section -->

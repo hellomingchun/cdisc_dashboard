@@ -1,11 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
-    const dropzone = document.getElementById('dropzone');
-    const fileInput = document.getElementById('file-input');
-    const browseBtn = document.getElementById('browse-btn');
-    const filesListCard = document.getElementById('files-list-card');
-    const filesList = document.getElementById('files-list');
-    const fileCountBadge = document.getElementById('file-count');
+    const dropzoneSpecs = document.getElementById('dropzone-specs');
+    const fileInputSpecs = document.getElementById('file-input-specs');
+    const browseBtnSpecs = document.getElementById('browse-btn-specs');
+    const filesListCardSpecs = document.getElementById('files-list-card-specs');
+    const filesListSpecs = document.getElementById('files-list-specs');
+    const fileCountBadgeSpecs = document.getElementById('file-count-specs');
+
+    const dropzoneData = document.getElementById('dropzone-data');
+    const fileInputData = document.getElementById('file-input-data');
+    const browseBtnData = document.getElementById('browse-btn-data');
+    const filesListCardData = document.getElementById('files-list-card-data');
+    const filesListData = document.getElementById('files-list-data');
+    const fileCountBadgeData = document.getElementById('file-count-data');
     const btnBuild = document.getElementById('btn-build');
     const emptyState = document.getElementById('empty-state');
     const previewSection = document.getElementById('preview-section');
@@ -36,118 +43,87 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // State
-    let uploadedFiles = [];
+    let uploadedSpecs = [];
+    let uploadedData = [];
     
-    // Mock Data for Preview
-    const mockData = {
-        'DM': {
-            headers: ['STUDYID', 'DOMAIN', 'USUBJID', 'SUBJID', 'RFSTDTC', 'RFENDTC', 'SITEID', 'BRTHDTC', 'AGE', 'AGEU', 'SEX', 'RACE', 'ETHNIC', 'ARMCD', 'ARM'],
-            rows: [
-                ['CDISC01', 'DM', 'CDISC01-1001', '1001', '2023-01-15', '2023-06-20', '100', '1980-05-12', '42', 'YEARS', 'M', 'WHITE', 'NOT HISPANIC OR LATINO', 'TRT', 'Treatment'],
-                ['CDISC01', 'DM', 'CDISC01-1002', '1002', '2023-01-18', '2023-06-25', '100', '1975-11-23', '47', 'YEARS', 'F', 'ASIAN', 'NOT HISPANIC OR LATINO', 'PBO', 'Placebo'],
-                ['CDISC01', 'DM', 'CDISC01-1003', '1003', '2023-02-05', '2023-07-10', '101', '1990-02-28', '33', 'YEARS', 'M', 'BLACK OR AFRICAN AMERICAN', 'NOT HISPANIC OR LATINO', 'TRT', 'Treatment'],
-                ['CDISC01', 'DM', 'CDISC01-1004', '1004', '2023-02-12', '2023-07-18', '101', '1965-08-14', '57', 'YEARS', 'F', 'WHITE', 'HISPANIC OR LATINO', 'PBO', 'Placebo'],
-                ['CDISC01', 'DM', 'CDISC01-1005', '1005', '2023-03-01', '', '102', '1988-12-05', '34', 'YEARS', 'M', 'ASIAN', 'NOT HISPANIC OR LATINO', 'TRT', 'Treatment']
-            ]
-        },
-        'AE': {
-            headers: ['STUDYID', 'DOMAIN', 'USUBJID', 'AESEQ', 'AETERM', 'AEDECOD', 'AEBODSYS', 'AESEV', 'AESER', 'AESTDTC', 'AEENDTC'],
-            rows: [
-                ['CDISC01', 'AE', 'CDISC01-1001', '1', 'HEADACHE', 'HEADACHE', 'NERVOUS SYSTEM DISORDERS', 'MILD', 'N', '2023-02-10', '2023-02-12'],
-                ['CDISC01', 'AE', 'CDISC01-1001', '2', 'NAUSEA', 'NAUSEA', 'GASTROINTESTINAL DISORDERS', 'MODERATE', 'N', '2023-03-05', '2023-03-08'],
-                ['CDISC01', 'AE', 'CDISC01-1002', '1', 'FATIGUE', 'FATIGUE', 'GENERAL DISORDERS', 'MILD', 'N', '2023-01-25', '2023-02-05'],
-                ['CDISC01', 'AE', 'CDISC01-1004', '1', 'DIZZINESS', 'DIZZINESS', 'NERVOUS SYSTEM DISORDERS', 'SEVERE', 'Y', '2023-04-12', '2023-04-15']
-            ]
-        },
-        'VS': {
-            headers: ['STUDYID', 'DOMAIN', 'USUBJID', 'VSSEQ', 'VSTESTCD', 'VSTEST', 'VSORRES', 'VSORRESU', 'VSSTRESC', 'VSSTRESN', 'VSSTRESU', 'VISIT', 'VSDTC'],
-            rows: [
-                ['CDISC01', 'VS', 'CDISC01-1001', '1', 'SYSBP', 'Systolic Blood Pressure', '120', 'mmHg', '120', '120', 'mmHg', 'SCREENING', '2023-01-10'],
-                ['CDISC01', 'VS', 'CDISC01-1001', '2', 'DIABP', 'Diastolic Blood Pressure', '80', 'mmHg', '80', '80', 'mmHg', 'SCREENING', '2023-01-10'],
-                ['CDISC01', 'VS', 'CDISC01-1001', '3', 'WEIGHT', 'Weight', '75', 'kg', '75', '75', 'kg', 'SCREENING', '2023-01-10']
-            ]
-        },
-        'LB': {
-            headers: ['STUDYID', 'DOMAIN', 'USUBJID', 'LBSEQ', 'LBTESTCD', 'LBTEST', 'LBCAT', 'LBORRES', 'LBORRESU', 'LBSTRESC', 'LBSTRESN', 'LBSTRESU', 'VISIT'],
-            rows: [
-                ['CDISC01', 'LB', 'CDISC01-1001', '1', 'GLUC', 'Glucose', 'CHEMISTRY', '95', 'mg/dL', '5.27', '5.27', 'mmol/L', 'SCREENING'],
-                ['CDISC01', 'LB', 'CDISC01-1001', '2', 'ALT', 'Alanine Aminotransferase', 'CHEMISTRY', '25', 'U/L', '25', '25', 'U/L', 'SCREENING'],
-                ['CDISC01', 'LB', 'CDISC01-1002', '1', 'HGB', 'Hemoglobin', 'HEMATOLOGY', '14.2', 'g/dL', '142', '142', 'g/L', 'SCREENING']
-            ]
-        }
-    };
+    // SDTM Datasets built from API
+    let sdtmData = {};
 
     // --- File Upload Logic ---
-    
-    // Browse click
-    browseBtn.addEventListener('click', () => fileInput.click());
-    
-    // File Input change
-    fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
-    
-    // Drag & Drop
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropzone.addEventListener(eventName, preventDefaults, false);
-    });
-    
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-    
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropzone.addEventListener(eventName, () => dropzone.classList.add('dragover'), false);
-    });
-    
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropzone.addEventListener(eventName, () => dropzone.classList.remove('dragover'), false);
-    });
-    
-    dropzone.addEventListener('drop', (e) => {
-        const dt = e.dataTransfer;
-        handleFiles(dt.files);
-    });
-    
-    function handleFiles(files) {
-        const newFiles = Array.from(files);
-        
-        // Filter out non-supported files
-        const validFiles = newFiles.filter(file => {
-            const ext = file.name.split('.').pop().toLowerCase();
-            return ['yaml', 'yml', 'json', 'xlsx'].includes(ext);
+    function setupDropzone(dropzone, fileInput, browseBtn, validExtensions, listCard, listElement, countBadge, uploadedArray, updateCallback) {
+        browseBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, preventDefaults, false);
         });
-        
-        if (validFiles.length < newFiles.length) {
-            showToast('Some files were rejected. Only .yaml, .json, and .xlsx are supported.', 'warning');
-        }
-        
-        if (validFiles.length > 0) {
-            uploadedFiles = [...uploadedFiles, ...validFiles];
-            updateFilesUI();
-            showToast(`Successfully added ${validFiles.length} file(s)`, 'success');
+
+        function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, () => dropzone.classList.add('dragover'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, () => dropzone.classList.remove('dragover'), false);
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            handleFiles(e.dataTransfer.files);
+        });
+
+        function handleFiles(files) {
+            const newFiles = Array.from(files);
+            const validFiles = newFiles.filter(file => {
+                const ext = file.name.split('.').pop().toLowerCase();
+                return validExtensions.includes(ext);
+            });
+            
+            if (validFiles.length < newFiles.length) {
+                showToast(`Some files were rejected. Only ${validExtensions.join(', ')} are supported.`, 'warning');
+            }
+            
+            if (validFiles.length > 0) {
+                validFiles.forEach(f => uploadedArray.push(f));
+                updateCallback();
+                showToast(`Successfully added ${validFiles.length} file(s)`, 'success');
+            }
         }
     }
-    
-    function updateFilesUI() {
-        if (uploadedFiles.length > 0) {
-            filesListCard.classList.remove('hidden');
+
+    setupDropzone(dropzoneSpecs, fileInputSpecs, browseBtnSpecs, ['yaml', 'yml', 'json', 'xlsx'], filesListCardSpecs, filesListSpecs, fileCountBadgeSpecs, uploadedSpecs, updateUI);
+    setupDropzone(dropzoneData, fileInputData, browseBtnData, ['xml', 'csv'], filesListCardData, filesListData, fileCountBadgeData, uploadedData, updateUI);
+
+    function updateUI() {
+        renderFileList(uploadedSpecs, filesListCardSpecs, filesListSpecs, fileCountBadgeSpecs, uploadedSpecs);
+        renderFileList(uploadedData, filesListCardData, filesListData, fileCountBadgeData, uploadedData);
+        
+        if (uploadedSpecs.length > 0 || uploadedData.length > 0) {
             btnBuild.disabled = false;
         } else {
-            filesListCard.classList.add('hidden');
             btnBuild.disabled = true;
         }
+    }
+
+    function renderFileList(filesArray, listCard, listElement, countBadge, sourceArray) {
+        if (filesArray.length > 0) {
+            listCard.classList.remove('hidden');
+        } else {
+            listCard.classList.add('hidden');
+        }
         
-        fileCountBadge.textContent = uploadedFiles.length;
-        filesList.innerHTML = '';
+        countBadge.textContent = filesArray.length;
+        listElement.innerHTML = '';
         
-        uploadedFiles.forEach((file, index) => {
+        filesArray.forEach((file, index) => {
             const li = document.createElement('li');
             li.className = 'file-item';
             
             const ext = file.name.split('.').pop().toLowerCase();
             let iconClass = 'fa-file-lines';
             if (ext === 'xlsx') iconClass = 'fa-file-excel';
-            if (ext === 'json') iconClass = 'fa-file-code';
+            if (ext === 'json' || ext === 'xml') iconClass = 'fa-file-code';
+            if (ext === 'csv') iconClass = 'fa-file-csv';
             
             li.innerHTML = `
                 <div class="file-info">
@@ -157,41 +133,137 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="btn-remove" data-index="${index}"><i class="fa-solid fa-xmark"></i></button>
             `;
             
-            filesList.appendChild(li);
+            listElement.appendChild(li);
         });
         
-        // Add remove listeners
-        document.querySelectorAll('.btn-remove').forEach(btn => {
+        listElement.querySelectorAll('.btn-remove').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const index = e.currentTarget.getAttribute('data-index');
-                uploadedFiles.splice(index, 1);
-                updateFilesUI();
+                sourceArray.splice(index, 1);
+                updateUI();
             });
         });
     }
     
+    // --- Form Mapping Logic ---
+    const mappingRowsContainer = document.getElementById('mapping-rows');
+    const btnAddMapping = document.getElementById('btn-add-mapping');
+
+    function createMappingRow(domain = '', formoid = '') {
+        const row = document.createElement('div');
+        row.className = 'mapping-row';
+        row.innerHTML = `
+            <input type="text" class="mapping-input domain-input" placeholder="Domain (e.g., DM)" value="${domain}" style="flex: 1;">
+            <i class="fa-solid fa-arrow-right" style="color: var(--text-muted); font-size: 0.8rem;"></i>
+            <input type="text" class="mapping-input formoid-input" placeholder="FormOID (e.g., F_1DEMOGRAPHIC)" value="${formoid}" style="flex: 2;">
+            <button class="btn-remove btn-remove-mapping"><i class="fa-solid fa-xmark"></i></button>
+        `;
+        mappingRowsContainer.appendChild(row);
+
+        row.querySelector('.btn-remove-mapping').addEventListener('click', () => {
+            row.remove();
+        });
+    }
+
+    // Initialize with one empty row
+    createMappingRow();
+
+    btnAddMapping.addEventListener('click', () => {
+        createMappingRow();
+    });
+
     // --- Build SDTM Logic ---
     
-    btnBuild.addEventListener('click', () => {
+    btnBuild.addEventListener('click', async () => {
+        if (uploadedSpecs.length === 0 && uploadedData.length === 0) return;
+
         // Show loading state
         const originalText = btnBuild.innerHTML;
         btnBuild.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Building...';
         btnBuild.disabled = true;
         
-        // Simulate API call processing time
-        setTimeout(() => {
-            btnBuild.innerHTML = originalText;
-            btnBuild.disabled = false;
+        try {
+            const formData = new FormData();
+            [...uploadedSpecs, ...uploadedData].forEach(file => {
+                formData.append('files', file);
+            });
+
+            // Gather form mappings
+            const formMappings = {};
+            document.querySelectorAll('.mapping-row').forEach(row => {
+                const domain = row.querySelector('.domain-input').value.trim().toUpperCase();
+                const formoid = row.querySelector('.formoid-input').value.trim();
+                if (domain && formoid) {
+                    formMappings[domain] = formoid;
+                }
+            });
+
+            if (Object.keys(formMappings).length > 0) {
+                const mappingConfig = {
+                    defaults: {
+                        form_mapping: formMappings
+                    }
+                };
+                const mappingBlob = new Blob([JSON.stringify(mappingConfig)], { type: 'application/json' });
+                formData.append('files', mappingBlob, 'ui_form_mappings.yaml');
+            }
+            
+            const response = await fetch('/api/build', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to build datasets');
+            }
+            
+            sdtmData = data;
             
             // Switch UI states
             emptyState.classList.add('hidden');
             previewSection.classList.remove('hidden');
             
-            // Render default domain
-            renderTable('DM');
-            showToast('SDTM datasets built successfully!', 'success');
-        }, 1500);
+            // Update the tabs based on returned domains
+            updateTabs(Object.keys(sdtmData));
+            
+            // Render first available domain
+            const domains = Object.keys(sdtmData);
+            if (domains.length > 0) {
+                renderTable(domains[0]);
+                showToast('SDTM datasets built successfully!', 'success');
+            } else {
+                showToast('No datasets generated.', 'warning');
+            }
+        } catch (error) {
+            console.error(error);
+            showToast(error.message, 'error');
+        } finally {
+            btnBuild.innerHTML = originalText;
+            btnBuild.disabled = false;
+        }
     });
+
+    function updateTabs(domains) {
+        const tabsContainer = document.querySelector('.domain-tabs');
+        tabsContainer.innerHTML = ''; // clear existing tabs
+        
+        domains.forEach((domain, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'tab' + (idx === 0 ? ' active' : '');
+            btn.setAttribute('data-domain', domain);
+            btn.innerHTML = `<i class="fa-solid fa-table"></i> ${domain}`;
+            
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                renderTable(domain);
+            });
+            
+            tabsContainer.appendChild(btn);
+        });
+    }
     
     // --- Tabs & Table Rendering ---
     
@@ -206,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     function renderTable(domain) {
-        const data = mockData[domain];
+        const data = sdtmData[domain];
         if (!data) return;
         
         const thead = sdtmTable.querySelector('thead');

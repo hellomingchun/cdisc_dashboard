@@ -161,6 +161,31 @@ a { text-decoration: none; color: inherit; }
     box-shadow: var(--shadow-md);
 }
 
+details.mapping-card > summary::-webkit-details-marker {
+    display: none;
+}
+details.mapping-card[open] summary #mapping-chevron {
+    transform: rotate(180deg);
+}
+.mapping-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.mapping-input {
+    background: var(--bg-panel-light);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    outline: none;
+    transition: var(--transition-fast);
+}
+.mapping-input:focus {
+    border-color: var(--primary);
+}
+
 /* Sidebar */
 .sidebar {
     width: 260px;
