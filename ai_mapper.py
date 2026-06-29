@@ -91,12 +91,12 @@ def get_local_llm_pipeline():
         # Avoid fragmentation issues
         os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
         
-        print("Loading local LLM (Qwen3.6-35B-A3B), please wait...")
+        print("Loading local LLM (Qwen2.5-3B-Instruct), please wait...")
         device = 0 if torch.cuda.is_available() else -1
         
         _local_llm_pipeline = pipeline(
             "text-generation",
-            model="Qwen/Qwen3.6-35B-A3B",
+            model="Qwen/Qwen2.5-3B-Instruct",
             torch_dtype=torch.float16,
             device=device,
         )
