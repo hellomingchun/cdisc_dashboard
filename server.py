@@ -17,6 +17,7 @@ try:
     from cdiscbuilder.sdtm.sdtm import create_sdtm_datasets
     from cdiscbuilder.sdtm.odm_parser import parse_odm_to_long_df
     from cdiscbuilder.sdtm.loader.excel_parser import parse_excel_to_yaml_strings
+    from data_prep import prepare_csv_data
 
 except ImportError as e:
     print(f"Error importing cdiscbuilder: {e}")
@@ -56,6 +57,12 @@ async def build_sdtm(files: list[UploadFile] = File(...)):
                 input_csv = Path(temp_dir) / file.filename
                 with open(input_csv, "wb") as buffer:
                     shutil.copyfileobj(file.file, buffer)
+                    
+                # Auto-detect and unpivot wide format CSVs
+                prepare_csv_data(input_csv, file.filename)
+                
+                # Load df so AI mapping can run on CSV data
+                df = pd.read_csv(input_csv)
                     
             elif ext == 'xlsx':
                 excel_path = Path(temp_dir) / file.filename
