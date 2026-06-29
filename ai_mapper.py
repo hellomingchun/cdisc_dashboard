@@ -86,14 +86,17 @@ def get_local_llm_pipeline():
     if _local_llm_pipeline is None:
         from transformers import pipeline
         import torch
+        import os
         
-        print("Loading local LLM (Phi-3.5-mini-instruct), please wait...")
+        # Avoid fragmentation issues
+        os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+        
+        print("Loading local LLM (Qwen3.6-35B-A3B), please wait...")
         device = 0 if torch.cuda.is_available() else -1
         
-        # Removed trust_remote_code=True because it causes the 'seen_tokens' error with newer transformers versions
         _local_llm_pipeline = pipeline(
             "text-generation",
-            model="microsoft/Phi-3.5-mini-instruct",
+            model="Qwen/Qwen3.6-35B-A3B",
             torch_dtype=torch.float16,
             device=device,
         )
