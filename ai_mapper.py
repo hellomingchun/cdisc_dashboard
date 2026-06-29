@@ -90,13 +90,12 @@ def get_local_llm_pipeline():
         print("Loading local LLM (Phi-3.5-mini-instruct), please wait...")
         device = 0 if torch.cuda.is_available() else -1
         
-        # Phi-3.5 often requires trust_remote_code=True for some environments, but usually standard pipeline works
+        # Removed trust_remote_code=True because it causes the 'seen_tokens' error with newer transformers versions
         _local_llm_pipeline = pipeline(
             "text-generation",
             model="microsoft/Phi-3.5-mini-instruct",
             torch_dtype=torch.float16,
             device=device,
-            trust_remote_code=True
         )
     return _local_llm_pipeline
 
